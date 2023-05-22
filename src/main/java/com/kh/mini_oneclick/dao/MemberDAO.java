@@ -131,10 +131,11 @@ public class MemberDAO {
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT * FROM T_MEMBER";
+            String sql = "SELECT * FROM T_MEMBER WHERE ID_ =" + "'" + getId + "'";
             rs = stmt.executeQuery(sql);
 
             while(rs.next()) {
+                int num = rs.getInt("NUM_");
                 String id = rs.getString("ID_");
                 String pwd = rs.getString("PWD");
                 String name = rs.getString("NAME_");
@@ -146,6 +147,7 @@ public class MemberDAO {
                 String isSub = rs.getString("IS_SUB");
 
                 MemberVO vo = new MemberVO();
+                vo.setNum(num);
                 vo.setId(id);
                 vo.setPwd(pwd);
                 vo.setName(name);
@@ -658,7 +660,7 @@ public class MemberDAO {
     }
 
     // 새로운 후기 작성 및 작성 여부 변경
-    public boolean writeReviewUpdateWritten(String memNum, String lecNum, String content) {
+    public boolean writeReviewUpdateWritten(String memNum, String lecNum, String content, String url) {
         Connection conn = null;
         PreparedStatement pStmt1 = null;
         PreparedStatement pStmt2 = null;
@@ -669,11 +671,12 @@ public class MemberDAO {
             conn.setAutoCommit(false); // 트랜잭션 시작
 
             String writeReviewSql = "INSERT INTO T_REVIEW(NUM_, LECTURE_NUM, MEMBER_NUM, TITLE, CONTENT, IMG_, CREATED) " +
-                    "VALUES(REVIEW_SEQ.NEXTVAL, ?, ?, '제목', ?, '이미지url', SYSDATE)";
+                    "VALUES(REVIEW_SEQ.NEXTVAL, ?, ?, '제목', ?, ?, SYSDATE)";
             pStmt1 = conn.prepareStatement(writeReviewSql);
             pStmt1.setString(1, lecNum);
             pStmt1.setString(2, memNum);
             pStmt1.setString(3, content);
+            pStmt1.setString(4, url);
             int writeReviewResult = pStmt1.executeUpdate();
 
             String updateWrittenSql = "UPDATE T_MY_LECTURE SET WRITTEN = 'Y' WHERE LECTURE_NUM = ?";

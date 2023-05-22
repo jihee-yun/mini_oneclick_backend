@@ -1,5 +1,6 @@
 package com.kh.mini_oneclick.dao;
 import com.kh.mini_oneclick.common.Common;
+import com.kh.mini_oneclick.vo.MyLectureVo;
 import com.kh.mini_oneclick.vo.MySubsVo;
 import com.kh.mini_oneclick.vo.PaymentVo;
 import com.kh.mini_oneclick.vo.SubsVo;
@@ -15,7 +16,7 @@ public class PaymentDAO {
     private PreparedStatement subsStmt = null;
     private PreparedStatement mySubsStmt = null;
 
-    // 구독 결제 정보 저장
+    // 구독 결제 정보 저장(트랜잭션)
     public boolean paymentInsert(PaymentVo vo, SubsVo subsVo, MySubsVo mySubsVo) {
         try {
             conn = Common.getConnection();
@@ -57,6 +58,8 @@ public class PaymentDAO {
         int count = pStmt.executeUpdate();
         System.out.println("입금 DB 결과 확인 : " + count);
     }
+    // 해당 생성된 LectureNum 으로 MyLecture 테이블에도 데이터 삽입
+
 
     // 생성된 결제번호 호출
     private int getGeneratedPaymentNum() throws SQLException {
@@ -87,7 +90,7 @@ public class PaymentDAO {
         }
         return subsNum;
     }
-    // 회원 구독 상태 여부 변경
+    // 회원 구독 여부 Y 업데이트
     private void updateMemberSubStatus(int memberNum) throws SQLException {
         String updateMemberSql = "UPDATE T_MEMBER SET IS_SUB = 'Y' WHERE NUM_ = ?";
         pStmt = conn.prepareStatement(updateMemberSql);
@@ -98,6 +101,7 @@ public class PaymentDAO {
     // my 구독 저장 결제되는시점부터 START DATE 시작 END DATE는 TYPE마다 다름
     private void insertMySubs(MySubsVo mySubsVo, int subsNum, String type) throws SQLException {
         String mySubsSql = "";
+
         switch (type) {
             case "3개월" :
                 mySubsSql = "INSERT INTO T_MY_SUBS(NUM_, SUBS_NUM, MEMBER_NUM, START_DATE, END_DATE) " +
@@ -120,36 +124,60 @@ public class PaymentDAO {
         System.out.println(type);
     }
 
+    // 클래스 결제(트랜잭션)
+    public boolean paymentClass(PaymentVo vo, MyLectureVo myLectureVo) {
+        try {
+            conn = Common.getConnection();
+            conn.setAutoCommit(false);
 
+            insertPayment(vo); // 결제 메소드 재사용
+            insertMyLecture(vo.getMemberNum(), myLectureVo);
 
-    // 구독 환불(수정해야함 객체지향적으로 아직 못했어요..)
+            conn.commit(); // 모든 작업 성공 시 커밋
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                if (conn != null) {
+                    conn.rollback(); // 예외 발생 시 롤백
+                }
+            } catch (Exception r) {
+                r.printStackTrace();
+            }
+            return false;
+        } finally {
+
+            Common.close(pStmt);
+            Common.close(conn);
+        }
+    }
+    // 수강 강의 정보 저장
+    private void insertMyLecture(int memberNum, MyLectureVo myLectureVo) throws SQLException {
+        String myLectureSql = "INSERT INTO T_MY_LECTURE(NUM_, MEMBER_NUM, CREATED, IS_DELETED, WRITTEN) VALUES (MY_LECTURE_SEQ.NEXTVAL, ?, SYSDATE, 'N', 'N')";
+        pStmt = conn.prepareStatement(myLectureSql);
+        pStmt.setInt(1, memberNum);
+        int count = pStmt.executeUpdate();
+        System.out.println("수강 강의 DB 결과 확인: " + count);
+    }
+
+    // 구독 환불(트랜잭션)
     public boolean payBack(int num) {
         int result = 0;
 
         try {
             conn = Common.getConnection();
             conn.setAutoCommit(false);
-
-            // 결제 취소 정보 업데이트
-            String updatePaymentSql = "UPDATE T_PAYMENT SET IS_CANCEL = 'Y' WHERE NUM_ = ?";
-            pStmt = conn.prepareStatement(updatePaymentSql);
-            pStmt.setInt(1, num);
-            result = pStmt.executeUpdate();
-            System.out.println("결제 취소 DB 결과 확인: " + result);
-
+            // 결제 취소 정보 업뎃
+            payBackSub(num);
             // 구독 정보 삭제
-            String deleteSubsSql = "DELETE FROM T_SUBS WHERE PAYMENT_NUM = ?";
-            pStmt = conn.prepareStatement(deleteSubsSql);
-            pStmt.setInt(1, num);
-            result = pStmt.executeUpdate();
-            System.out.println("구독 정보 삭제 DB 결과 확인: " + result);
-
+            deleteSubs(num);
+            // 마이구독 삭제
+            int subsNum = getSubsNum(num);
+            deleteMySubs(subsNum);
             // 회원 구독 여부 업데이트
-            String updateMemberSql = "UPDATE T_MEMBER SET IS_SUB = 'N' WHERE MEMBER_NUM = (SELECT MEMBER_NUM FROM T_PAYMENT WHERE NUM_ = ?)";
-            pStmt = conn.prepareStatement(updateMemberSql);
-            pStmt.setInt(1, num);
-            int updateCount = pStmt.executeUpdate();
-            System.out.println("Member 구독 여부 확인: " + updateCount);
+            int memberNum = getMemberNum(num);
+            downMemberSub(memberNum);
+
 
             conn.commit(); // 모든 작업 성공 시 커밋
         } catch (Exception e) {
@@ -167,4 +195,136 @@ public class PaymentDAO {
         }
         return result > 0;
     }
+    // 결제 취소 정보 업데이트
+    private void payBackSub(int paymentNum) throws SQLException {
+        String payBackSql = "UPDATE T_PAYMENT SET IS_CANCEL = 'Y' WHERE NUM_ = ?";
+        pStmt = conn.prepareStatement(payBackSql);
+        pStmt.setInt(1, paymentNum);
+        int result = pStmt.executeUpdate();
+        System.out.println("결제 취소 업데이트 결과 확인 : " + result);
+    }
+
+    // 구독 삭제
+    private void deleteSubs(int paymentNum) throws SQLException {
+        String deleteSubsSql = "DELETE FROM T_SUBS WHERE PAYMENT_NUM = ?";
+        pStmt = conn.prepareStatement(deleteSubsSql);
+        pStmt.setInt(1, paymentNum);
+        int result = pStmt.executeUpdate();
+        System.out.println("구독 삭제 DB 확인 : " + result);
+    }
+
+    // My 구독 삭제
+    private void deleteMySubs(int subsNum) throws SQLException {
+        String deleteMySubsSql = "DELETE FROM T_MY_SUBS WHERE SUBS_NUM = ?";
+        pStmt = conn.prepareStatement(deleteMySubsSql);
+        pStmt.setInt(1, subsNum);
+        int result = pStmt.executeUpdate();
+        System.out.println("My 구독 삭제 DB 확인 : " + result);
+    }
+
+    // 회원 구독 여부 업데이트
+    private void downMemberSub(int memberNum) throws SQLException {
+        String updateMemberSql = "UPDATE T_MEMBER SET IS_SUB = 'N' WHERE NUM_ = ?";
+        pStmt = conn.prepareStatement(updateMemberSql);
+        pStmt.setInt(1, memberNum);
+        int updateCount = pStmt.executeUpdate();
+        System.out.println("Member 구독 여부 확인 : " + updateCount);
+    }
+
+    // 업뎃된 PaymentNum 에 대한 SubsNum 가져오기
+    private int getSubsNum(int paymentNum) throws SQLException {
+        String getSubsNumSql = "SELECT SUBS_NUM FROM T_SUBS WHERE PAYMENT_NUM = ?";
+        pStmt = conn.prepareStatement(getSubsNumSql);
+        pStmt.setInt(1, paymentNum);
+        ResultSet rs = pStmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("SUBS_NUM");
+        } else {
+            //기본값 반환
+            return 0;
+        }
+    }
+    // 업뎃된 PaymentNum 에 대한 MemberNum 가져오기
+    private int getMemberNum(int paymentNum) throws SQLException {
+        String getMemberNumSql = "SELECT MEMBER_NUM FROM T_PAYMENT WHERE NUM_ = ?";
+        pStmt = conn.prepareStatement(getMemberNumSql);
+        pStmt.setInt(1, paymentNum);
+        ResultSet rs = pStmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("MEMBER_NUM");
+        } else {
+            //기본값 반환
+            return 0;
+        }
+    }
+    // 클래스 결제 환불
+    public boolean payBackClass(int num) {
+        int result = 0;
+
+        try {
+            conn = Common.getConnection();
+            conn.setAutoCommit(false);
+
+            // 결제 취소 정보 업데이트
+            classPayBack(num);
+            // 수강 강의 정보 삭제
+            int memberNum = getPayBackMemberNum(num);
+            delMyLecture(memberNum);
+
+            conn.commit(); // 모든 작업 성공 시 커밋
+            result = 1; // 성공 시 결과값을 1로 설정
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                if (conn != null) {
+                    conn.rollback(); // 예외 발생 시 롤백
+                }
+            } catch (Exception r) {
+                r.printStackTrace();
+            }
+        } finally {
+            Common.close(pStmt);
+            Common.close(conn);
+        }
+        return result > 0;
+    }
+
+    // 결제 취소 정보 업데이트
+    private void classPayBack(int paymentNum) throws SQLException {
+        String payBackSql = "UPDATE T_PAYMENT SET IS_CANCEL = 'Y' WHERE NUM_ = ?";
+        pStmt = conn.prepareStatement(payBackSql);
+        pStmt.setInt(1, paymentNum);
+        int result = pStmt.executeUpdate();
+        System.out.println("결제 취소 업데이트 결과 확인 : " + result);
+    }
+
+    // 수강 강의 정보 삭제
+    private void delMyLecture(int memberNum) throws SQLException {
+        String myLectureSql = "DELETE FROM T_MY_LECTURE WHERE MEMBER_NUM = ?";
+        pStmt = conn.prepareStatement(myLectureSql);
+        pStmt.setInt(1, memberNum);
+        int count = pStmt.executeUpdate();
+        System.out.println("수강 강의 DB 결과 확인: " + count);
+    }
+
+    // 업뎃된 환불 PaymentNum 에 대한 MemberNum 가져오기
+    private int getPayBackMemberNum(int paymentNum) throws SQLException {
+        String getMemberNumSql = "SELECT MEMBER_NUM FROM T_PAYMENT WHERE NUM_ = ?";
+        pStmt = conn.prepareStatement(getMemberNumSql);
+        pStmt.setInt(1, paymentNum);
+        ResultSet rs = pStmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("MEMBER_NUM");
+        } else {
+            //기본값 반환
+            return 0;
+        }
+    }
+
+    // 다음주에 해야할것
+    // 합친 코드에서 id 로그인할때 들어온 데이터 배열을  context api 에 데이터 쪼개 받아서 useState 에 각각 데이터가 잘 들어가는지 확인하기
+    // lectureNum 값 context api 로 받아와서 최종 테스트해보기
+    // 일단 코드 다 합치고, 내구독권 결제해보고 잘 들어간다면 ~ 내 결제내역가서 context api 로 paymentNum 값만 뽑아와서 환불 테스트해보기
+    // 그쪽까지 성공하면 이제 내 강의 결제해보고 잘 들어가면 ~ 내 결제내역가서 context api 로 paymentNum 값 뽑아와서 클래스 환불 테스트해보기
+    // 여기까지 성공하면 이번 플젝 구현 끝! deadLine 5/26.. 열심히 화이팅..
 }

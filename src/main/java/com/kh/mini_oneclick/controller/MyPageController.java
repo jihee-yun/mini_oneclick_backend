@@ -188,8 +188,9 @@ public class MyPageController {
         String getMemNum = write.get("memNum");
         String getLecNum = write.get("lecNum");
         String getContent = write.get("content");
+        String getImgUrl = write.get("url");
         MemberDAO dao = new MemberDAO();
-        boolean isSuccess = dao.writeReviewUpdateWritten(getMemNum, getLecNum, getContent);
+        boolean isSuccess = dao.writeReviewUpdateWritten(getMemNum, getLecNum, getContent, getImgUrl);
         if (isSuccess) {
             return new ResponseEntity<>(isSuccess, HttpStatus.OK);
         }
