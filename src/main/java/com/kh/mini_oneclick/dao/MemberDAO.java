@@ -804,6 +804,7 @@ public class MemberDAO {
 
             while(rs.next()) {
                 int num = rs.getInt("CNUM");
+                int num2 = rs.getInt("LNUM");
                 String lectureName = rs.getString("NAME_");
                 String thumnail = rs.getString("THUM");
                 int price = rs.getInt("PRICE_");
@@ -811,6 +812,7 @@ public class MemberDAO {
                 Date startDate = rs.getDate("START_DATE");
 
                 MyCartVO vo = new MyCartVO();
+                vo.setLecNum(num2);
                 vo.setCartNum(num);
                 vo.setLecName(lectureName);
                 vo.setThum(thumnail);
