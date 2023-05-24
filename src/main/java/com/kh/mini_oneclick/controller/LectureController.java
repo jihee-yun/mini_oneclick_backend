@@ -16,7 +16,7 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class LectureController {
-    // 강의 정보 출력1
+    // 강의 정보 출력
     @GetMapping("/class")
     public ResponseEntity<Map<String, Object>> lectureList(@RequestParam String category, @RequestParam String lectureNum) {
         System.out.println("LectureList 메소드 실행 !\n category : " + category + ", lectureNum : " + lectureNum);
@@ -33,7 +33,7 @@ public class LectureController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/regWishChk")
+    @GetMapping("/class/regWishChk")
     public ResponseEntity<Boolean> wishChk (@RequestParam String lectureNum, @RequestParam String memberNum) {
         System.out.println("wishChk 메소드 실행! lectureNum : " + lectureNum + ", memberNum : " + memberNum);
         DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
@@ -43,22 +43,26 @@ public class LectureController {
         return new ResponseEntity<>(istrue, HttpStatus.OK);
     }
 
-    @PostMapping("/acceptWishList")
-    public ResponseEntity<Boolean> acceptWish(@RequestBody String lectureNum, @RequestBody String memberNum) {
-        System.out.println("acceptWish 실행! lectureNum : " + lectureNum + ", memberNum : " + memberNum);
+    @PostMapping("/class/acceptWishList")
+    public ResponseEntity<Boolean> acceptWish(@RequestBody Map<String, String> data) {
+        System.out.println("acceptWish 실행!");
         DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
-        int parsedLectureNum  = Integer.parseInt(lectureNum);
-        int parsedMemberNum  = Integer.parseInt(memberNum);
+        String getLectureNum = data.get("lectureNum");
+        String getMemberNum = data.get("memberNum");
+        int parsedLectureNum  = Integer.parseInt(getLectureNum);
+        int parsedMemberNum  = Integer.parseInt(getMemberNum);
         Boolean istrue = dao.acceptWish(parsedLectureNum, parsedMemberNum);
         return new ResponseEntity<>(istrue, HttpStatus.OK);
     }
 
-    @PostMapping("/delWishList")
-    public ResponseEntity<Boolean> delWish(@RequestBody String lectureNum, @RequestBody String memberNum) {
-        System.out.println("delWishList 실행! lectureNum : " + lectureNum + ", memberNum : " + memberNum);
-        int parsedLectureNum  = Integer.parseInt(lectureNum);
-        int parsedMemberNum  = Integer.parseInt(memberNum);
+    @PostMapping("/class/delWishList")
+    public ResponseEntity<Boolean> delWish(@RequestBody Map<String, String> data) {
+        System.out.println("delWishList 실행!");
         DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
+        String getLectureNum = data.get("lectureNum");
+        String getMemberNum = data.get("memberNum");
+        int parsedLectureNum  = Integer.parseInt(getLectureNum);
+        int parsedMemberNum  = Integer.parseInt(getMemberNum);
         boolean istrue = dao.deleteWish(parsedLectureNum, parsedMemberNum);
         return new ResponseEntity<>(istrue, HttpStatus.OK);
     }

@@ -112,7 +112,7 @@ public class DetailLectureInfoDAO {
 
     public boolean acceptWish(int lectureNum, int memberNum) {
         int result = 0;
-        String sql = "INSERT INTO T_WISHLIST VALUES(WISHLIST_SEQ.NEXT_VAL, ?, ?)";
+        String sql = "INSERT INTO T_WISHLIST VALUES(WISHLIST_SEQ.NEXTVAL, ?, ?)";
         try {
             conn = Common.getConnection();
             pStmt = conn.prepareStatement(sql);
