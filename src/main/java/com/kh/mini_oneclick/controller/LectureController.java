@@ -3,24 +3,33 @@ package com.kh.mini_oneclick.controller;
 import com.kh.mini_oneclick.dao.DetailLectureInfoDAO;
 import com.kh.mini_oneclick.dao.LectureDAO;
 import com.kh.mini_oneclick.vo.DetailLectureInfoVO;
+import com.kh.mini_oneclick.vo.ImgVO;
 import com.kh.mini_oneclick.vo.LectureVO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class LectureController {
     // 강의 정보 출력1
     @GetMapping("/class")
-    public ResponseEntity<List<DetailLectureInfoVO>> lectureList(@RequestParam String category, @RequestParam String lectureNum) {
+    public ResponseEntity<Map<String, Object>> lectureList(@RequestParam String category, @RequestParam String lectureNum) {
         System.out.println("LectureList 메소드 실행 !\n category : " + category + ", lectureNum : " + lectureNum);
         DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
-        int parseId = Integer.parseInt(category);
-        int parseNum = Integer.parseInt(lectureNum);
-        List<DetailLectureInfoVO> result = dao.LectureList(parseId, parseNum);
+        int parsedCategory  = Integer.parseInt(category);
+        int parsedLectureNum  = Integer.parseInt(lectureNum);
+        List<DetailLectureInfoVO> lectureList = dao.LectureList(parsedCategory, parsedLectureNum );
+        List<ImgVO> imgList = dao.getLectureImg(parsedLectureNum);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("lectureList", lectureList);
+        result.put("imgList", imgList);
+
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

@@ -22,8 +22,8 @@ public class DetailLectureInfoDAO {
             System.out.println("LectureDAO 실행 : " + category + "," + lectureNum);
             String sql = "SELECT * FROM T_LECTURE L " +
                     "INNER JOIN T_CATEGORY C ON L.CATEGORY_NUM = C.NUM_ " +
-                    "WHERE C.NUM_ = " + "'" + category + "' AND " + "L.NUM_ =" + "'" + lectureNum + "'" ;
-//                    "AND L.END_DATE >= SYSDATE";
+                    "WHERE C.NUM_ = " + "'" + category + "' AND " + "L.NUM_ =" + "'" + lectureNum + "'" +
+                    "AND L.END_DATE >= SYSDATE";
             rs = stmt.executeQuery(sql);
             while(rs.next()) {
                 int LectureNum = rs.getInt("NUM_");
