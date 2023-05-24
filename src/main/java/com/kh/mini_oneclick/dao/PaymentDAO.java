@@ -136,7 +136,7 @@ public class PaymentDAO {
             int memberNum = getMemberNum(paymentVo.getMemberNum());
             // 결제하면 my cart 에서 삭제
             deleteCart(memberNum ,lectureNum);
-            // 내 수강목록 추가 ??
+            // 내 수강목록 추가 ?? 안되는 이유를 모르겠음...
             insertMyLecture(memberNum, myLectureVo, lectureNum);
 
 
