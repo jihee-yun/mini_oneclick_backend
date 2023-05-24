@@ -131,13 +131,14 @@ public class PaymentDAO {
             // 결제 메소드 사용
             insertPayment(paymentVo);
             // 해당 결제될떄 lectureNum 갖고오기
-            int lectureNum = getLectureNum(paymentVo.getLectureNum());
+            int lectureNum = getGeneratedPaymentNum();
             // 해당 결제될떄 memberNum 갖고오기
             int memberNum = getMemberNum(paymentVo.getMemberNum());
             // 결제하면 my cart 에서 삭제
             deleteCart(memberNum ,lectureNum);
-            // 내 수강목록 추가 ??
-            insertMyLecture(paymentVo.getMemberNum(), myLectureVo, myLectureVo.getLectureNum());
+            // 내 수강목록 추가 ?? 안되는 이유를 모르겠음...
+            insertMyLecture(memberNum, myLectureVo, lectureNum);
+
 
 
             conn.commit(); // 모든 작업 성공 시 커밋

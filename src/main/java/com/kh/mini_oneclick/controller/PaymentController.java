@@ -37,9 +37,10 @@ public class PaymentController {
         boolean isTrue = dao.paymentInsert(payment, subs, mySubs);
         return new ResponseEntity<>(isTrue, HttpStatus.OK);
     }
+
     // 클래스 결제
     @PostMapping("/payClass")
-    public ResponseEntity<Boolean> paymentClass (@RequestBody Map<String, String> payClassData) {
+    public ResponseEntity<Boolean> paymentClass(@RequestBody Map<String, String> payClassData) {
         int lectureNum = Integer.parseInt(payClassData.get("lectureNum"));
         int memberNum = Integer.parseInt(payClassData.get("memberNum"));
         BigDecimal amount = new BigDecimal(payClassData.get("amount"));
@@ -55,32 +56,32 @@ public class PaymentController {
         PaymentDAO dao = new PaymentDAO();
         boolean isTrue = dao.paymentClass(payment, myLecture);
         return new ResponseEntity<>(isTrue, HttpStatus.OK);
-
     }
-//    // 장바구니 결제
-//    @PostMapping("/payCart")
-//    public ResponseEntity<Boolean> paymentCartClass(@RequestBody Map<String, String> payCartData) {
-//        try {
-//            int lectureNum = Integer.parseInt(payCartData.get("lectureNum"));
-//            int memberNum = Integer.parseInt(payCartData.get("memberNum"));
-//            BigDecimal amount = new BigDecimal(payCartData.get("amount"));
-//
-//            PaymentVo paymentVo = new PaymentVo();
-//            paymentVo.setLectureNum(lectureNum);
-//            paymentVo.setMemberNum(memberNum);
-//            paymentVo.setAmount(amount);
-//
-//            MyLectureVo myLectureVo = new MyLectureVo();
-//            myLectureVo.setMemberNum(memberNum);
-//            myLectureVo.setLectureNum(lectureNum);
-//
-//            MyCartVO myCartVO = new MyCartVO();
-//            myCartVO.setMemNum(memberNum);
-//            myCartVO.setLecNum(lectureNum);
-//
-//        }
-//    }
 
+    // 장바구니 결제
+    @PostMapping("/payCart")
+    public ResponseEntity<Boolean> paymentCartClass(@RequestBody Map<String, String> payCartData) {
+
+            int lectureNum = Integer.parseInt(payCartData.get("lectureNum"));
+            int memberNum = Integer.parseInt(payCartData.get("memberNum"));
+            BigDecimal amount = new BigDecimal(payCartData.get("amount"));
+
+            PaymentVo paymentVo = new PaymentVo();
+            paymentVo.setLectureNum(lectureNum);
+            paymentVo.setMemberNum(memberNum);
+            paymentVo.setAmount(amount);
+
+            MyLectureVo myLectureVo = new MyLectureVo();
+            myLectureVo.setMemberNum(memberNum);
+
+            MyCartVO myCartVO = new MyCartVO();
+            myCartVO.setMemNum(memberNum);
+            myCartVO.setLecNum(lectureNum);
+
+            PaymentDAO dao = new PaymentDAO();
+            boolean isTrue = dao.paymentCartClass(paymentVo, myLectureVo, myCartVO);
+            return new ResponseEntity<>(isTrue, HttpStatus.OK);
+    }
 
     // 구독권 결제 환불
     @PostMapping("/payBack")
