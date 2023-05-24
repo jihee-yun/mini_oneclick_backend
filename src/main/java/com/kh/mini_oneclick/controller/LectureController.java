@@ -13,7 +13,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class LectureController {
-    // 강의 정보 출력
+    // 강의 정보 출력1
     @GetMapping("/class")
     public ResponseEntity<List<DetailLectureInfoVO>> lectureList(@RequestParam String category, @RequestParam String lectureNum) {
         System.out.println("LectureList 메소드 실행 !\n category : " + category + ", lectureNum : " + lectureNum);
