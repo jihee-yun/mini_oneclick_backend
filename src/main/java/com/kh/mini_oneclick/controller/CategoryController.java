@@ -13,7 +13,7 @@ import java.util.List;
 public class CategoryController {
     private CategoryDAO categoryDAO = new CategoryDAO();
 
-    // 앞단에서 요청한 카테고리 목록 조회
+    // 앞단에서 요청한 카테고리 목록 조회1
     @GetMapping("/category")
     public ResponseEntity<List<CategoryVo>> categoryList() {
         List<CategoryVo> categoryVoList = categoryDAO.getAllCategories();
