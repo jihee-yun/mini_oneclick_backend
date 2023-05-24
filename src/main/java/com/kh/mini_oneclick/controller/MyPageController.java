@@ -223,6 +223,16 @@ public class MyPageController {
         List<MyPaymentVO> list = dao.myPayment(id);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
+
+    // 수강생 내역 조회
+    @GetMapping("/myStudent")
+    public ResponseEntity<List<MyPaymentVO>> myStudentList(@RequestParam String name) {
+        System.out.println("ID : " + name);
+        MemberDAO dao = new MemberDAO();
+        List<MyPaymentVO> list = dao.myStudent(name);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
     // 장바구니 내역 조회
     @GetMapping("/myCart")
     public ResponseEntity<List<MyCartVO>> myCartList(@RequestParam String id) {

@@ -788,6 +788,47 @@ public class MemberDAO {
         return list;
     }
 
+    // 결제 내역 조회
+    public List<MyPaymentVO> myStudent(String name) {
+        List<MyPaymentVO> list = new ArrayList<>();
+        try {
+            conn = Common.getConnection();
+            stmt = conn.createStatement();
+            String sql = "SELECT P.*, L.NAME_, L.THUM, M.NAME_ AS STUDENT, M.TEL\n" +
+                    " FROM T_PAYMENT P JOIN T_LECTURE L\n" +
+                    " ON L.NUM_ = P.LECTURE_NUM\n" +
+                    " JOIN T_MEMBER M\n" +
+                    " ON P.MEMBER_NUM = M.NUM_\n" +
+                    " WHERE L.LECTURER = " + "'" + name + "'";
+            rs = stmt.executeQuery(sql);
+
+            while(rs.next()) {
+                int num = rs.getInt("NUM_");
+                String lectureName = rs.getString("NAME_");
+                String thumnail = rs.getString("THUM");
+                Date created = rs.getDate("CREATED");
+                String student = rs.getString("STUDENT");
+                String tel = rs.getString("TEL");
+
+                MyPaymentVO vo = new MyPaymentVO();
+                vo.setNum(num);
+                vo.setLectureName(lectureName);
+                vo.setThum(thumnail);
+                vo.setCreated(created);
+                vo.setStudent(student);
+                vo.setTel(tel);
+                list.add(vo);
+            }
+            Common.close(rs);
+            Common.close(stmt);
+            Common.close(conn);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     // 장바구니 내역 조회
     public List<MyCartVO> myCart(String id) {
         List<MyCartVO> list = new ArrayList<>();
