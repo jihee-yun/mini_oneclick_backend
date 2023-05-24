@@ -67,13 +67,27 @@ public class LectureController {
         return new ResponseEntity<>(istrue, HttpStatus.OK);
     }
 
-//    @GetMapping("/class/regWishChk")
-//    public ResponseEntity<Boolean> cartChk (@RequestParam String lectureNum, @RequestParam String memberNum) {
-//        System.out.println("wishChk 메소드 실행! lectureNum : " + lectureNum + ", memberNum : " + memberNum);
-//        DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
-//        int parsedLectureNum  = Integer.parseInt(lectureNum);
-//        int parsedMemberNum  = Integer.parseInt(memberNum);
-//        Boolean istrue = dao.checkWishReg(parsedLectureNum, parsedMemberNum);
-//        return new ResponseEntity<>(istrue, HttpStatus.OK);
-//    }
+    @GetMapping("/class/regCartChk")
+    public ResponseEntity<Boolean> cartChk (@RequestParam String lectureNum, @RequestParam String memberNum) {
+        System.out.println("cartChk 실행!");
+        DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
+        int parsedLectureNum  = Integer.parseInt(lectureNum);
+        int parsedMemberNum  = Integer.parseInt(memberNum);
+        Boolean istrue = dao.checkCartReg(parsedLectureNum, parsedMemberNum);
+        return new ResponseEntity<>(istrue, HttpStatus.OK);
+    }
+
+    @PostMapping("/class/acceptCartList")
+    public ResponseEntity<Boolean> acceptCart(@RequestBody Map<String, String> data) {
+        System.out.println("acceptCart 실행!");
+        DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
+        String getLectureNum = data.get("lectureNum");
+        String getMemberNum = data.get("memberNum");
+        String getQuantity = data.get("quantity");
+        int parsedLectureNum  = Integer.parseInt(getLectureNum);
+        int parsedMemberNum  = Integer.parseInt(getMemberNum);
+        int parsedQuantity = Integer.parseInt(getQuantity);
+        Boolean istrue = dao.acceptCart(parsedLectureNum, parsedMemberNum, parsedQuantity);
+        return new ResponseEntity<>(istrue, HttpStatus.OK);
+    }
 }

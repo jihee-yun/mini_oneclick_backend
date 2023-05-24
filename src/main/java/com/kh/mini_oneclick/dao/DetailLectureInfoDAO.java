@@ -112,7 +112,7 @@ public class DetailLectureInfoDAO {
 
     public boolean acceptWish(int lectureNum, int memberNum) {
         int result = 0;
-        String sql = "INSERT INTO T_WISHLIST VALUES(WISHLIST_SEQ.NEXTVAL, ?, ?)";
+        String sql = "INSERT INTO T_WISHLIST(NUM_, LECTURE_NUM, MEMBER_NUM) VALUES(WISHLIST_SEQ.NEXTVAL, ?, ?)";
         try {
             conn = Common.getConnection();
             pStmt = conn.prepareStatement(sql);
@@ -140,6 +140,46 @@ public class DetailLectureInfoDAO {
             pStmt.setInt(2, memberNum);
             result = pStmt.executeUpdate();
             System.out.println("찜하기 삭제 결과 확인" + result);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pStmt);
+        Common.close(conn);
+
+        if(result == 1) return true;
+        else return false;
+    }
+
+    public boolean checkCartReg(int lectureNum, int memberNum) {
+        boolean isReg = false;
+        String sql = "SELECT * FROM T_CART " +
+                "WHERE LECTURE_NUM = " + "'" + lectureNum + "'" + "AND MEMBER_NUM = " + "'" + memberNum + "'";
+        try {
+            conn = Common.getConnection();
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+            if(rs.next()) isReg = false;
+            else isReg = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(rs);
+        Common.close(stmt);
+        Common.close(conn);
+        return isReg; // 위시리스트에 있으면 false, 없으면 true 반환
+    }
+
+    public boolean acceptCart(int lectureNum, int memberNum, int quantity) {
+        int result = 0;
+        String sql = "INSERT INTO T_CART(NUM_, LECTURE_NUM, MEMBER_NUM, QUANTITY) VALUES(CART_SEQ.NEXTVAL, ?, ?, ?)";
+        try {
+            conn = Common.getConnection();
+            pStmt = conn.prepareStatement(sql);
+            pStmt.setInt(1, lectureNum);
+            pStmt.setInt(2, memberNum);
+            pStmt.setInt(3, quantity);
+            result = pStmt.executeUpdate();
+            System.out.println("카트에 담기 결과 확인" + result);
         } catch(Exception e) {
             e.printStackTrace();
         }
