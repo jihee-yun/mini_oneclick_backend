@@ -76,7 +76,6 @@ public class PaymentController {
 
             MyCartVO myCartVO = new MyCartVO();
             myCartVO.setMemNum(memberNum);
-            myCartVO.setLecNum(lectureNum);
 
             PaymentDAO dao = new PaymentDAO();
             boolean isTrue = dao.paymentCartClass(paymentVo, myLectureVo, myCartVO);

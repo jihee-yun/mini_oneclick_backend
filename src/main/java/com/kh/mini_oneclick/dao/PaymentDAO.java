@@ -130,16 +130,10 @@ public class PaymentDAO {
             conn.setAutoCommit(false);
             // 결제 메소드 사용
             insertPayment(paymentVo);
-            // 해당 결제될떄 lectureNum 갖고오기
-            int lectureNum = getGeneratedPaymentNum();
-            // 해당 결제될떄 memberNum 갖고오기
-            int memberNum = getMemberNum(paymentVo.getMemberNum());
+            // 내 강의에 저장
+            insertMyLecture(paymentVo.getMemberNum(), myLectureVo, paymentVo.getLectureNum());
             // 결제하면 my cart 에서 삭제
-            deleteCart(memberNum ,lectureNum);
-            // 내 수강목록 추가 ?? 안되는 이유를 모르겠음...
-            insertMyLecture(memberNum, myLectureVo, lectureNum);
-
-
+            deleteCartDB(paymentVo.getMemberNum());
 
             conn.commit(); // 모든 작업 성공 시 커밋
             return true;
@@ -154,7 +148,6 @@ public class PaymentDAO {
             }
             return false;
         } finally {
-
             Common.close(pStmt);
             Common.close(conn);
         }
@@ -168,6 +161,7 @@ public class PaymentDAO {
             conn.setAutoCommit(false);
 
             insertPayment(vo); // 결제 메소드 재사용
+            // 내 수강페이지 저장
             insertMyLecture(vo.getMemberNum(), myLectureVo, vo.getLectureNum());
 
             conn.commit(); // 모든 작업 성공 시 커밋
@@ -183,7 +177,6 @@ public class PaymentDAO {
             }
             return false;
         } finally {
-
             Common.close(pStmt);
             Common.close(conn);
         }
@@ -198,15 +191,13 @@ public class PaymentDAO {
         System.out.println("수강 강의 DB 결과 확인: " + count);
     }
     // 카트 삭제
-    private void deleteCart(int memberNum, int lectureNum) throws SQLException {
-        String delCartSql = "DELETE FROM T_CART WHERE PAYMENT_NUM = ?";
+    private void deleteCartDB(int memberNum) throws SQLException {
+        String delCartSql = "DELETE FROM T_CART WHERE MEMBER_NUM = ?";
         pStmt = conn.prepareStatement(delCartSql);
         pStmt.setInt(1, memberNum);
-        pStmt.setInt(2, lectureNum);
         int cartCount = pStmt.executeUpdate();
-        System.out.println("장바구니 삭제 DB 결과 확인 : " + cartCount);
+        System.out.println("장바구니 삭제 DB 결과 확인: " + cartCount);
     }
-
     // 구독 환불(트랜잭션)
     public boolean payBack(int num) {
         int result = 0;
@@ -303,7 +294,6 @@ public class PaymentDAO {
             //기본값 반환
             return 0;
         }
-
     }
     // 업뎃된 PaymentNum 에 대한 LectureNum 가져오기
     private int getLectureNum(int paymentNum) throws SQLException {
