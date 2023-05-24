@@ -107,7 +107,7 @@ public class DetailLectureInfoDAO {
         Common.close(rs);
         Common.close(stmt);
         Common.close(conn);
-        return isReg; // 작성한 이력이 있으면 false, 없으면 true 반환
+        return isReg; // 위시리스트에 있으면 false, 없으면 true 반환
     }
 
     public boolean acceptWish(int lectureNum, int memberNum) {

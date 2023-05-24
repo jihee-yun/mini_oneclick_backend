@@ -66,4 +66,14 @@ public class LectureController {
         boolean istrue = dao.deleteWish(parsedLectureNum, parsedMemberNum);
         return new ResponseEntity<>(istrue, HttpStatus.OK);
     }
+
+//    @GetMapping("/class/regWishChk")
+//    public ResponseEntity<Boolean> cartChk (@RequestParam String lectureNum, @RequestParam String memberNum) {
+//        System.out.println("wishChk 메소드 실행! lectureNum : " + lectureNum + ", memberNum : " + memberNum);
+//        DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
+//        int parsedLectureNum  = Integer.parseInt(lectureNum);
+//        int parsedMemberNum  = Integer.parseInt(memberNum);
+//        Boolean istrue = dao.checkWishReg(parsedLectureNum, parsedMemberNum);
+//        return new ResponseEntity<>(istrue, HttpStatus.OK);
+//    }
 }
