@@ -1,6 +1,7 @@
 package com.kh.mini_oneclick.dao;
 
 import com.kh.mini_oneclick.common.Common;
+import com.kh.mini_oneclick.vo.ImgVO;
 import com.kh.mini_oneclick.vo.LectureVO;
 import com.kh.mini_oneclick.vo.DetailLectureInfoVO;
 
