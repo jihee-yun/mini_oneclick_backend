@@ -384,6 +384,9 @@ public class PaymentDAO {
     }
 
     // 구독권 있는사람이 결제할 경우(앞단에서 memberNum 에 isSub 이 Y 일 경우)
+//    private int useSubPay(int memberNum) throws SQLException {
+//
+//    }
 
 
 
