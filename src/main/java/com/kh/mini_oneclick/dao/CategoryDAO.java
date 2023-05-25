@@ -15,32 +15,45 @@ public class CategoryDAO {
 
     // 카테고리 리스트 조회
     public List<CategoryVo> getAllCategories() {
-        List<CategoryVo> categoryList = new ArrayList<>();
+        List<CategoryVo> list = new ArrayList<>();
 
         try {
             conn = Common.getConnection();
-            pstmt = conn.prepareStatement("SELECT * FROM T_CATEGORY");
-            rs = pstmt.executeQuery();
+            stmt = conn.createStatement();
+
+            String sql = "SELECT L.NUM_ AS LECTURE_NUM, L.NAME_, L.START_DATE, L.END_DATE, L.THUM, L.INTRO, L.PRICE_, L.LECTURER, C.NAME_ AS CATEGORY_NAME "
+                    + "FROM T_LECTURE L "
+                    + "JOIN T_CATEGORY C ON L.CATEGORY_NUM = C.NUM_ ";
+
+            rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
-                int categoryNum = rs.getInt("NUM_");
-                String categoryName = rs.getString("NAME_");
+                int lectureNum = rs.getInt("LECTURE_NUM");
+                String name = rs.getString("NAME_");
+                String thumbnail = rs.getString("THUM");
+                String intro = rs.getString("INTRO");
+                int price = rs.getInt("PRICE_");
+                String lecturer = rs.getString("LECTURER");
+                String categoryName = rs.getString("CATEGORY_NAME");
 
-                CategoryVo categoryVo = new CategoryVo();
-                categoryVo.setNum(categoryNum);
-                categoryVo.setName(categoryName);
-
-                categoryList.add(categoryVo);
+                CategoryVo vo = new CategoryVo();
+                vo.setLectureNum(lectureNum);
+                vo.setName(name);
+                vo.setThum(thumbnail);
+                vo.setIntro(intro);
+                vo.setPrice(price);
+                vo.setLecturer(lecturer);
+                vo.setCategoryName(categoryName);
+                list.add(vo);
             }
+            Common.close(rs);
+            Common.close(stmt);
+            Common.close(conn);
+
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            Common.close(rs);
-            Common.close(pstmt);
-            Common.close(conn);
         }
-
-        return categoryList;
+        return list;
     }
 
     // 카테고리별 강의 조회
@@ -61,22 +74,20 @@ public class CategoryDAO {
             while (rs.next()) {
                 int lectureNum = rs.getInt("LECTURE_NUM");
                 String name = rs.getString("NAME_");
-                Date startDate = rs.getDate("START_DATE");
-                Date endDate = rs.getDate("END_DATE");
                 String thumbnail = rs.getString("THUM");
                 String intro = rs.getString("INTRO");
                 int price = rs.getInt("PRICE_");
                 String lecturer = rs.getString("LECTURER");
+                String categoryName = rs.getString("CATEGORY_NAME");
 
                 CategoryVo vo = new CategoryVo();
                 vo.setLectureNum(lectureNum);
                 vo.setName(name);
-                vo.setStartDate(startDate);
-                vo.setEndDate(endDate);
                 vo.setThum(thumbnail);
                 vo.setIntro(intro);
                 vo.setPrice(price);
                 vo.setLecturer(lecturer);
+                vo.setCategoryName(categoryName);
                 list.add(vo);
             }
             Common.close(rs);

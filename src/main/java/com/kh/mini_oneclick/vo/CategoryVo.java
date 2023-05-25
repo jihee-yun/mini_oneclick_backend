@@ -12,11 +12,10 @@ public class CategoryVo {
     private int lectureNum;
     private int likeCount;
     private String name;
-    private Date startDate;
-    private Date endDate;
     private String thum;
     private String description;
     private String intro;
     private int price;
     private String lecturer;
+    private String categoryName;
 }

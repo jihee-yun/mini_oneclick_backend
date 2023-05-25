@@ -99,15 +99,15 @@ public class DetailLectureInfoDAO {
             conn = Common.getConnection();
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
-            if(rs.next()) isReg = false;
-            else isReg = true;
+            if(rs.next()) isReg = true;
+            else isReg = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
         Common.close(rs);
         Common.close(stmt);
         Common.close(conn);
-        return isReg; // 위시리스트에 있으면 false, 없으면 true 반환
+        return isReg; // 위시리스트에 있으면 true, 없으면 false 반환
     }
 
     public boolean acceptWish(int lectureNum, int memberNum) {
@@ -146,8 +146,8 @@ public class DetailLectureInfoDAO {
         Common.close(pStmt);
         Common.close(conn);
 
-        if(result == 1) return true;
-        else return false;
+        if(result == 1) return false;
+        else return true;
     }
 
     public boolean checkCartReg(int lectureNum, int memberNum) {
