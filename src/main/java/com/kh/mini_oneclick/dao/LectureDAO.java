@@ -29,6 +29,7 @@ public class LectureDAO {
 
             while(rs.next()) {
                 int num = rs.getInt("NUM_");
+                int categoryNum = rs.getInt("CATEGORY_NUM");
                 Integer likecount = rs.getInt("LIKECOUNT");
                 String name = rs.getString("NAME_");
                 Date start = rs.getDate("START_DATE");
@@ -43,6 +44,7 @@ public class LectureDAO {
 
                 LectureVO vo = new LectureVO();
                 vo.setNum(num);
+                vo.setCategoryNum(categoryNum);
                 vo.setLikeCount(likecount);
                 vo.setName(name);
                 vo.setStartDate(start);
@@ -82,6 +84,7 @@ public class LectureDAO {
 
             while(rs.next()) {
                 int num = rs.getInt("NUM_");
+                int categoryNum = rs.getInt("CATEGORY_NUM");
                 Integer likecount = rs.getInt("LIKECOUNT");
                 String name = rs.getString("NAME_");
                 Date start = rs.getDate("START_DATE");
@@ -96,6 +99,7 @@ public class LectureDAO {
 
                 LectureVO vo = new LectureVO();
                 vo.setNum(num);
+                vo.setCategoryNum(categoryNum);
                 vo.setLikeCount(likecount);
                 vo.setName(name);
                 vo.setStartDate(start);
@@ -138,6 +142,7 @@ public class LectureDAO {
 
             while(rs.next()) {
                 int num = rs.getInt("NUM_");
+                int categoryNum = rs.getInt("CATEGORY_NUM");
                 Integer likecount = rs.getInt("LIKECOUNT");
                 String name = rs.getString("NAME_");
                 Date start = rs.getDate("START_DATE");
@@ -152,6 +157,7 @@ public class LectureDAO {
 
                 LectureVO vo = new LectureVO();
                 vo.setNum(num);
+                vo.setCategoryNum(categoryNum);
                 vo.setLikeCount(likecount);
                 vo.setName(name);
                 vo.setStartDate(start);
@@ -194,6 +200,7 @@ public class LectureDAO {
 
             while(rs.next()) {
                 int num = rs.getInt("NUM_");
+                int categoryNum = rs.getInt("CATEGORY_NUM");
                 Integer likecount = rs.getInt("LIKECOUNT");
                 String name = rs.getString("NAME_");
                 Date start = rs.getDate("START_DATE");
@@ -208,6 +215,7 @@ public class LectureDAO {
 
                 LectureVO vo = new LectureVO();
                 vo.setNum(num);
+                vo.setCategoryNum(categoryNum);
                 vo.setLikeCount(likecount);
                 vo.setName(name);
                 vo.setStartDate(start);
