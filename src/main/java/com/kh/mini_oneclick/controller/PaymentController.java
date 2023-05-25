@@ -18,12 +18,10 @@ public class PaymentController {
     // 구독 결제
     @PostMapping("/payment")
     public ResponseEntity<Boolean> paymentInsert(@RequestBody Map<String, String> payData) {
-        int lectureNum = Integer.parseInt(payData.get("lectureNum"));
         int memberNum = Integer.parseInt(payData.get("memberNum"));
         BigDecimal amount = new BigDecimal(payData.get("amount"));
 
         PaymentVo payment = new PaymentVo();
-        payment.setLectureNum(lectureNum);
         payment.setMemberNum(memberNum);
         payment.setAmount(amount);
 
@@ -34,7 +32,7 @@ public class PaymentController {
         mySubs.setMemberNum(memberNum);
 
         PaymentDAO dao = new PaymentDAO();
-        boolean isTrue = dao.paymentInsert(payment, subs, mySubs);
+        boolean isTrue = dao.paySubInsert(payment, subs, mySubs);
         return new ResponseEntity<>(isTrue, HttpStatus.OK);
     }
 

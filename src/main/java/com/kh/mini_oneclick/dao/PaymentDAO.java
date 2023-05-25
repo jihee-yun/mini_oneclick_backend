@@ -14,12 +14,12 @@ public class PaymentDAO {
     private PreparedStatement mySubsStmt = null;
 
     // 구독 결제 정보 저장(트랜잭션)
-    public boolean paymentInsert(PaymentVo vo, SubsVo subsVo, MySubsVo mySubsVo) {
+    public boolean paySubInsert(PaymentVo vo, SubsVo subsVo, MySubsVo mySubsVo) {
         try {
             conn = Common.getConnection();
             conn.setAutoCommit(false);
 
-            insertPayment(vo);
+            insertPaySub(vo);
             int paymentNum = getGeneratedPaymentNum();
             insertSubs(paymentNum, subsVo);
             int subsNum = getGeneratedSubsNum();
@@ -44,6 +44,15 @@ public class PaymentDAO {
             Common.close(conn);
         }
     }
+    // 구독결제 테이블 정보 저장
+    public void insertPaySub(PaymentVo paymentVo) throws SQLException {
+        String paySubSql = "INSERT INTO T_PAYSUB(NUM_, MEMBER_NUM, CREATED, AMOUNT, IS_CANCEL) VALUES (PAYSUB_SEQ.NEXTVAL, ?, SYSDATE, ?, 'N')";
+        pStmt = conn.prepareStatement(paySubSql, new String[]{"NUM_"});
+        pStmt.setInt(1, paymentVo.getMemberNum());
+        pStmt.setBigDecimal(2, paymentVo.getAmount());
+        int count = pStmt.executeUpdate();
+        System.out.println("구독 입금 DB 결과 확인 : " + count);
+    }
 
     // 결제정보 저장
     private void insertPayment(PaymentVo vo) throws SQLException {
@@ -58,19 +67,21 @@ public class PaymentDAO {
     // 해당 생성된 LectureNum 으로 MyLecture 테이블에도 데이터 삽입
 
 
-    // 생성된 결제번호 호출
+    // 구독 결제 시 생성된 결제번호 호출
     private int getGeneratedPaymentNum() throws SQLException {
         ResultSet generatedKeys = pStmt.getGeneratedKeys();
         int paymentNum = 0;
         if (generatedKeys.next()) {
             paymentNum = generatedKeys.getInt(1);
+            System.out.println(paymentNum);
         }
         return paymentNum;
+
     }
 
     // 구독 정보 저장
     private void insertSubs(int paymentNum, SubsVo subsVo) throws SQLException {
-        String subsSql = "INSERT INTO T_SUBS(NUM_, PAYMENT_NUM, TYPE_) VALUES (SUBS_SEQ.NEXTVAL, ?, ?)";
+        String subsSql = "INSERT INTO T_SUBS(NUM_, PAYSUB_NUM, TYPE_) VALUES (SUBS_SEQ.NEXTVAL, ?, ?)";
         subsStmt = conn.prepareStatement(subsSql, new String[]{"NUM_"});
         subsStmt.setInt(1, paymentNum);
         subsStmt.setString(2, subsVo.getType());
@@ -235,7 +246,7 @@ public class PaymentDAO {
     }
     // 결제 취소 정보 업데이트
     private void payBackSub(int paymentNum) throws SQLException {
-        String payBackSql = "UPDATE T_PAYMENT SET IS_CANCEL = 'Y', CANCEL_DATE = SYSDATE WHERE NUM_ = ?";
+        String payBackSql = "UPDATE T_PAYSUB SET IS_CANCEL = 'Y', CANCEL_DATE = SYSDATE WHERE NUM_ = ?";
         pStmt = conn.prepareStatement(payBackSql);
         pStmt.setInt(1, paymentNum);
         int result = pStmt.executeUpdate();
@@ -244,7 +255,7 @@ public class PaymentDAO {
 
     // 구독 삭제
     private void deleteSubs(int paymentNum) throws SQLException {
-        String deleteSubsSql = "DELETE FROM T_SUBS WHERE PAYMENT_NUM = ?";
+        String deleteSubsSql = "DELETE FROM T_SUBS WHERE PAYSUB_NUM = ?";
         pStmt = conn.prepareStatement(deleteSubsSql);
         pStmt.setInt(1, paymentNum);
         int result = pStmt.executeUpdate();
@@ -284,7 +295,7 @@ public class PaymentDAO {
     }
     // 업뎃된 PaymentNum 에 대한 MemberNum 가져오기
     private int getMemberNum(int paymentNum) throws SQLException {
-        String getMemberNumSql = "SELECT MEMBER_NUM FROM T_PAYMENT WHERE NUM_ = ?";
+        String getMemberNumSql = "SELECT MEMBER_NUM FROM T_PAYMSUB WHERE NUM_ = ?";
         pStmt = conn.prepareStatement(getMemberNumSql);
         pStmt.setInt(1, paymentNum);
         ResultSet rs = pStmt.executeQuery();
@@ -371,6 +382,11 @@ public class PaymentDAO {
             return 0;
         }
     }
+
+    // 구독권 있는사람이 결제할 경우(앞단에서 memberNum 에 isSub 이 Y 일 경우)
+
+
+
 
     // 다음주에 해야할것
     // 합친 코드에서 id 로그인할때 들어온 데이터 배열을  context api 에 데이터 쪼개 받아서 useState 에 각각 데이터가 잘 들어가는지 확인하기
