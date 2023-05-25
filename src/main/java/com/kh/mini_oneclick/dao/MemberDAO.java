@@ -353,7 +353,7 @@ public class MemberDAO {
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT C.NUM_, M.ID_, G.NAME_ AS CNAME, C.LECTURER, C.NAME_, C.THUM, C.INTRO, C.PRICE_, C.LIKECOUNT, L.CREATED, L.IS_DELETED\n" +
+            String sql = "SELECT C.NUM_, M.ID_, G.NUM_ AS CNUM, G.NAME_ AS CNAME, C.LECTURER, C.NAME_, C.THUM, C.INTRO, C.PRICE_, C.LIKECOUNT, L.CREATED, L.IS_DELETED\n" +
                     "    FROM T_MY_LECTURE L JOIN T_MEMBER M\n" +
                     "    ON M.NUM_ = L.MEMBER_NUM\n" +
                     "    JOIN T_LECTURE C \n" +
@@ -366,6 +366,7 @@ public class MemberDAO {
             while(rs.next()) {
                 int num = rs.getInt("NUM_");
                 String name = rs.getString("NAME_");
+                int cateNum = rs.getInt("CNUM");
                 String category = rs.getString("CNAME");
                 String thumnail = rs.getString("THUM");
                 String intro = rs.getString("INTRO");
@@ -379,6 +380,7 @@ public class MemberDAO {
                 LectureVO vo = new LectureVO();
                 vo.setNum(num);
                 vo.setName(name);
+                vo.setCategoryNum(cateNum);
                 vo.setCategoryName(category);
                 vo.setThum(thumnail);
                 vo.setIntro(intro);
@@ -404,7 +406,7 @@ public class MemberDAO {
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT W.NUM_, L.NUM_ AS LNUM, M.ID_, G.NAME_ AS CNAME, L.NAME_, L.THUM, L.INTRO, L.LECTURER, L.PRICE_, L.LIKECOUNT\n" +
+            String sql = "SELECT W.NUM_, L.NUM_ AS LNUM, M.ID_, G.NUM_ AS CNUM, G.NAME_ AS CNAME, L.NAME_, L.THUM, L.INTRO, L.LECTURER, L.PRICE_, L.LIKECOUNT\n" +
                     "    FROM T_MEMBER M JOIN  T_WISHLIST W\n" +
                     "    ON M.NUM_ = W.MEMBER_NUM\n" +
                     "    JOIN T_LECTURE L\n" +
@@ -417,6 +419,7 @@ public class MemberDAO {
             while(rs.next()) {
                 int num = rs.getInt("NUM_");
                 int num2 = rs.getInt("LNUM");
+                int cateNum = rs.getInt("CNUM");
                 String name = rs.getString("NAME_");
                 String category = rs.getString("CNAME");
                 String thumnail = rs.getString("THUM");
@@ -429,6 +432,7 @@ public class MemberDAO {
                 vo.setWishNum(num);
                 vo.setNum(num2);
                 vo.setName(name);
+                vo.setCategoryNum(cateNum);
                 vo.setCategoryName(category);
                 vo.setThum(thumnail);
                 vo.setIntro(intro);
