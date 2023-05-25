@@ -83,9 +83,9 @@ public class PaymentController {
     // 구독권 결제 환불
     @PostMapping("/payBack")
     public ResponseEntity<Boolean> paymentRefund(@RequestBody Map<String, Integer> refundData) {
-        int paymentNum = refundData.get("paymentNum");
+        int paySubNum = refundData.get("paySubNum");
         PaymentDAO dao = new PaymentDAO();
-        boolean isRefunded = dao.payBack(paymentNum);
+        boolean isRefunded = dao.payBack(paySubNum);
         return new ResponseEntity<>(isRefunded, HttpStatus.OK);
     }
     // 클래스 결제 환불

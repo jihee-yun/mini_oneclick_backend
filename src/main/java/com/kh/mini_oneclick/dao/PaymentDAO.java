@@ -73,7 +73,7 @@ public class PaymentDAO {
         int paymentNum = 0;
         if (generatedKeys.next()) {
             paymentNum = generatedKeys.getInt(1);
-            System.out.println(paymentNum);
+            System.out.println("해당 구독 결제시 결제 번호 : " + paymentNum);
         }
         return paymentNum;
 
@@ -131,7 +131,7 @@ public class PaymentDAO {
         mySubsStmt.setInt(2, mySubsVo.getMemberNum());
         int result = mySubsStmt.executeUpdate();
         System.out.println("MY 구독 저장 여부 확인 : " + result);
-        System.out.println(type);
+        System.out.println("구독 반환 타입 : " +  type);
     }
 
     // 카트 결제
@@ -245,19 +245,19 @@ public class PaymentDAO {
         return result > 0;
     }
     // 결제 취소 정보 업데이트
-    private void payBackSub(int paymentNum) throws SQLException {
+    private void payBackSub(int paySubNum) throws SQLException {
         String payBackSql = "UPDATE T_PAYSUB SET IS_CANCEL = 'Y', CANCEL_DATE = SYSDATE WHERE NUM_ = ?";
         pStmt = conn.prepareStatement(payBackSql);
-        pStmt.setInt(1, paymentNum);
+        pStmt.setInt(1, paySubNum);
         int result = pStmt.executeUpdate();
-        System.out.println("결제 취소 업데이트 결과 확인 : " + result);
+        System.out.println("구독 결제 취소 업데이트 결과 확인 : " + result);
     }
 
     // 구독 삭제
-    private void deleteSubs(int paymentNum) throws SQLException {
+    private void deleteSubs(int paySubNum) throws SQLException {
         String deleteSubsSql = "DELETE FROM T_SUBS WHERE PAYSUB_NUM = ?";
         pStmt = conn.prepareStatement(deleteSubsSql);
-        pStmt.setInt(1, paymentNum);
+        pStmt.setInt(1, paySubNum);
         int result = pStmt.executeUpdate();
         System.out.println("구독 삭제 DB 확인 : " + result);
     }
@@ -293,11 +293,11 @@ public class PaymentDAO {
             return 0;
         }
     }
-    // 업뎃된 PaymentNum 에 대한 MemberNum 가져오기
-    private int getMemberNum(int paymentNum) throws SQLException {
-        String getMemberNumSql = "SELECT MEMBER_NUM FROM T_PAYMSUB WHERE NUM_ = ?";
+    // 업뎃된 paySubNum 에 대한 MemberNum 가져오기
+    private int getMemberNum(int paySubNum) throws SQLException {
+        String getMemberNumSql = "SELECT MEMBER_NUM FROM T_PAYSUB WHERE NUM_ = ?";
         pStmt = conn.prepareStatement(getMemberNumSql);
-        pStmt.setInt(1, paymentNum);
+        pStmt.setInt(1, paySubNum);
         ResultSet rs = pStmt.executeQuery();
         if (rs.next()) {
             return rs.getInt("MEMBER_NUM");
