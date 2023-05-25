@@ -33,7 +33,7 @@ public class LectureController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/class/regWishChk")
+    @GetMapping("/regWishChk")
     public ResponseEntity<Boolean> wishChk (@RequestParam String lectureNum, @RequestParam String memberNum) {
         System.out.println("wishChk 메소드 실행! lectureNum : " + lectureNum + ", memberNum : " + memberNum);
         DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
@@ -43,7 +43,7 @@ public class LectureController {
         return new ResponseEntity<>(istrue, HttpStatus.OK);
     }
 
-    @PostMapping("/class/acceptWishList")
+    @PostMapping("/acceptWishList")
     public ResponseEntity<Boolean> acceptWish(@RequestBody Map<String, String> data) {
         System.out.println("acceptWish 실행!");
         DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
@@ -55,7 +55,7 @@ public class LectureController {
         return new ResponseEntity<>(istrue, HttpStatus.OK);
     }
 
-    @PostMapping("/class/delWishList")
+    @PostMapping("/delWishList")
     public ResponseEntity<Boolean> delWish(@RequestBody Map<String, String> data) {
         System.out.println("delWishList 실행!");
         DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
@@ -67,7 +67,7 @@ public class LectureController {
         return new ResponseEntity<>(istrue, HttpStatus.OK);
     }
 
-    @GetMapping("/class/regCartChk")
+    @GetMapping("/regCartChk")
     public ResponseEntity<Boolean> cartChk (@RequestParam String lectureNum, @RequestParam String memberNum) {
         System.out.println("cartChk 실행!");
         DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
@@ -77,7 +77,7 @@ public class LectureController {
         return new ResponseEntity<>(istrue, HttpStatus.OK);
     }
 
-    @PostMapping("/class/acceptCartList")
+    @PostMapping("/acceptCartList")
     public ResponseEntity<Boolean> acceptCart(@RequestBody Map<String, String> data) {
         System.out.println("acceptCart 실행!");
         DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
