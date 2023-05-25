@@ -16,4 +16,5 @@ public class MyCartVO {
     private int price;
     private int quantity;
     private Date startDate; // 일단 수강일자.......
+    private int totalPrice; // 총금액
 }

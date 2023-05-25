@@ -202,8 +202,27 @@ public class MyPageController {
     public ResponseEntity<Boolean> updateReview(@RequestBody Map<String, String> write) {
         String getNum = write.get("num");
         String getContent = write.get("content");
+        String getUrl = write.get("url");
         MemberDAO dao = new MemberDAO();
-        boolean isTrue = dao.updateReview(getNum, getContent);
+        boolean isTrue = dao.updateReview(getNum, getContent, getUrl);
+        return new ResponseEntity<>(isTrue, HttpStatus.OK);
+    }
+    // 후기 수정(이미지만 삭제)
+    @PostMapping("/deleteReviewImg")
+    public ResponseEntity<Boolean> deleteReviewImg(@RequestBody Map<String, String> write) {
+        String getNum = write.get("num");
+        String getUrl = write.get("url");
+        MemberDAO dao = new MemberDAO();
+        boolean isTrue = dao.deleteReviewImg(getNum, getUrl);
+        return new ResponseEntity<>(isTrue, HttpStatus.OK);
+    }
+    // 후기 수정(내용만 수정)
+    @PostMapping("/updateReviewContent")
+    public ResponseEntity<Boolean> updateReviewCon(@RequestBody Map<String, String> write) {
+        String getNum = write.get("num");
+        String getContent = write.get("content");
+        MemberDAO dao = new MemberDAO();
+        boolean isTrue = dao.updateReviewContent(getNum, getContent);
         return new ResponseEntity<>(isTrue, HttpStatus.OK);
     }
     // 이미지 업데이트(강의 썸네일)

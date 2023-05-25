@@ -353,7 +353,7 @@ public class MemberDAO {
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT C.NUM_, M.ID_, G.NAME_ AS CNAME, C.NAME_, C.THUM, C.INTRO, C.PRICE_, C.LIKECOUNT, L.CREATED, L.IS_DELETED\n" +
+            String sql = "SELECT C.NUM_, M.ID_, G.NAME_ AS CNAME, C.LECTURER, C.NAME_, C.THUM, C.INTRO, C.PRICE_, C.LIKECOUNT, L.CREATED, L.IS_DELETED\n" +
                     "    FROM T_MY_LECTURE L JOIN T_MEMBER M\n" +
                     "    ON M.NUM_ = L.MEMBER_NUM\n" +
                     "    JOIN T_LECTURE C \n" +
@@ -369,6 +369,7 @@ public class MemberDAO {
                 String category = rs.getString("CNAME");
                 String thumnail = rs.getString("THUM");
                 String intro = rs.getString("INTRO");
+                String lecturer = rs.getString("LECTURER");
                 int price = rs.getInt("PRICE_");
                 int likeCount = rs.getInt("LIKECOUNT");
                 Date created = rs.getDate("CREATED");
@@ -381,6 +382,7 @@ public class MemberDAO {
                 vo.setCategoryName(category);
                 vo.setThum(thumnail);
                 vo.setIntro(intro);
+                vo.setLecturer(lecturer);
                 vo.setPrice(price);
                 vo.setLikeCount(likeCount);
                 vo.setCreated(created);
@@ -402,7 +404,7 @@ public class MemberDAO {
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT W.NUM_, L.NUM_ AS LNUM, M.ID_, G.NAME_ AS CNAME, L.NAME_, L.THUM, L.INTRO, L.PRICE_, L.LIKECOUNT\n" +
+            String sql = "SELECT W.NUM_, L.NUM_ AS LNUM, M.ID_, G.NAME_ AS CNAME, L.NAME_, L.THUM, L.INTRO, L.LECTURER, L.PRICE_, L.LIKECOUNT\n" +
                     "    FROM T_MEMBER M JOIN  T_WISHLIST W\n" +
                     "    ON M.NUM_ = W.MEMBER_NUM\n" +
                     "    JOIN T_LECTURE L\n" +
@@ -419,6 +421,7 @@ public class MemberDAO {
                 String category = rs.getString("CNAME");
                 String thumnail = rs.getString("THUM");
                 String intro = rs.getString("INTRO");
+                String lecturer = rs.getString("LECTURER");
                 int price = rs.getInt("PRICE_");
                 int likeCount = rs.getInt("LIKECOUNT");
 
@@ -429,6 +432,7 @@ public class MemberDAO {
                 vo.setCategoryName(category);
                 vo.setThum(thumnail);
                 vo.setIntro(intro);
+                vo.setLecturer(lecturer);
                 vo.setPrice(price);
                 vo.setLikeCount(likeCount);
                 list.add(vo);
@@ -494,7 +498,7 @@ public class MemberDAO {
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT R.NUM_, L.NUM_ AS LNUM, R.CONTENT, M.ID_, L.NAME_, L.THUM, C.WRITTEN, R.CREATED\n" +
+            String sql = "SELECT R.NUM_, L.NUM_ AS LNUM, R.CONTENT, R.IMG_, M.ID_, L.NAME_, L.THUM, C.WRITTEN, R.CREATED\n" +
                     "    FROM T_REVIEW R JOIN T_MEMBER M\n" +
                     "    ON M.NUM_ = R.MEMBER_NUM\n" +
                     "    JOIN T_LECTURE L \n" +
@@ -510,6 +514,7 @@ public class MemberDAO {
                 int num2 = rs.getInt("LNUM");
                 String name = rs.getString("NAME_");
                 String thumnail = rs.getString("THUM");
+                String img = rs.getString("IMG_");
                 String content = rs.getString("CONTENT");
                 Date created = rs.getDate("CREATED");
 
@@ -519,6 +524,7 @@ public class MemberDAO {
                 vo.setTitle(name);
                 vo.setContent(content);
                 vo.setThum(thumnail);
+                vo.setImg(img);
                 vo.setCreated(created);
                 list.add(vo);
             }
@@ -707,8 +713,47 @@ public class MemberDAO {
 
         return isSuccess;
     }
-    // 후기 수정
-    public boolean updateReview(String num, String content) {
+    // 후기 수정(전체)
+    public boolean updateReview(String num, String content, String url) {
+        int result = 0;
+        String sql = "UPDATE T_REVIEW SET CONTENT  = ?, IMG_ = ?, CREATED = SYSDATE WHERE NUM_ = ?";
+
+        try {
+            conn = Common.getConnection();
+            pStmt = conn.prepareStatement(sql);
+            pStmt.setString(1, content);
+            pStmt.setString(2, url);
+            pStmt.setString(3, num);
+            result = pStmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pStmt);
+        Common.close(conn);
+        if(result == 1) return true;
+        else return false;
+    }
+    // 후기 수정(이미지 삭제만)
+    public boolean deleteReviewImg(String num, String url) {
+        int result = 0;
+        String sql = "UPDATE T_REVIEW SET IMG_ = ?, CREATED = SYSDATE WHERE NUM_ = ?";
+
+        try {
+            conn = Common.getConnection();
+            pStmt = conn.prepareStatement(sql);
+            pStmt.setString(1, url);
+            pStmt.setString(2, num);
+            result = pStmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pStmt);
+        Common.close(conn);
+        if(result == 1) return true;
+        else return false;
+    }
+    // 후기 수정(내용만 수정)
+    public boolean updateReviewContent(String num, String content) {
         int result = 0;
         String sql = "UPDATE T_REVIEW SET CONTENT  = ?, CREATED = SYSDATE WHERE NUM_ = ?";
 
@@ -726,6 +771,7 @@ public class MemberDAO {
         if(result == 1) return true;
         else return false;
     }
+
     // 강의 썸네일 이미지 업데이트
     public boolean updateImg(String url) {
         int result = 0;
@@ -851,6 +897,7 @@ public class MemberDAO {
                 int price = rs.getInt("PRICE_");
                 int quantity = rs.getInt("QUANTITY");
                 Date startDate = rs.getDate("START_DATE");
+                int totalPrice = price * quantity;
 
                 MyCartVO vo = new MyCartVO();
                 vo.setLecNum(num2);
@@ -860,6 +907,7 @@ public class MemberDAO {
                 vo.setPrice(price);
                 vo.setQuantity(quantity);
                 vo.setStartDate(startDate);
+                vo.setTotalPrice(totalPrice);
                 list.add(vo);
             }
             Common.close(rs);
