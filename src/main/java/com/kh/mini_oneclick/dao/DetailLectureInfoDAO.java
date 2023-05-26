@@ -14,6 +14,58 @@ public class DetailLectureInfoDAO {
     private ResultSet rs = null;
     private PreparedStatement pStmt = null;
 
+    public List<DetailLectureInfoVO> getAllLectureList() {
+        List<DetailLectureInfoVO> list = new ArrayList<>();
+        try {
+            conn = Common.getConnection();
+            stmt = conn.createStatement();
+            String sql = "SELECT * FROM T_LECTURE " +
+                    "INNER JOIN T_CATEGORY C ON L.CATEGORY_NUM = C.NUM_ " +
+                    "WHERE C.NUM_ = " + "'" + category + "' AND " + "L.NUM_ =" + "'" + lectureNum + "'" +
+                    "AND L.END_DATE >= SYSDATE";
+            rs = stmt.executeQuery(sql);
+            while(rs.next()) {
+                int LectureNum = rs.getInt("NUM_");
+                int CategoryNum = rs.getInt("CATEGORY_NUM");
+                int LikeCount = rs.getInt("LIKECOUNT");
+                String Name = rs.getString("NAME_");
+                Date StartDate = rs.getDate("START_DATE");
+                Date EndDate = rs.getDate("END_DATE");
+                String Thum = rs.getString("THUM");
+                String Desc = rs.getString("DESCRIPTION");
+                String Intro = rs.getString("INTRO");
+                int Price = rs.getInt("PRICE_");
+                String Addr = rs.getString("ADDR");
+                String Lecturer = rs.getString("LECTURER");
+                String Lecturer_desc = rs.getString("LECTURER_DESC");
+                String Lecture_photo = rs.getString("LECTURER_PHOTO");
+
+                DetailLectureInfoVO vo = new DetailLectureInfoVO();
+                vo.setNum(LectureNum);
+                vo.setCategory_Num(CategoryNum);
+                vo.setLikeCount(LikeCount);
+                vo.setName(Name);
+                vo.setStartDate(StartDate);
+                vo.setEndDate(EndDate);
+                vo.setThum(Thum);
+                vo.setDescription(Desc);
+                vo.setIntro(Intro);
+                vo.setPrice(Price);
+                vo.setAddr(Addr);
+                vo.setLecturer(Lecturer);
+                vo.setLecturer_desc(Lecturer_desc);
+                vo.setLecturer_photo(Lecture_photo);
+                list.add(vo);
+            }
+            Common.close(rs);
+            Common.close(stmt);
+            Common.close(conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public List<DetailLectureInfoVO> LectureList(int category, int lectureNum) {
         List<DetailLectureInfoVO> list = new ArrayList<>();
         try {

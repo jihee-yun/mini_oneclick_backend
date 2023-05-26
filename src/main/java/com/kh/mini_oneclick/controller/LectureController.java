@@ -23,7 +23,11 @@ public class LectureController {
         DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
         int parsedCategory  = Integer.parseInt(category);
         int parsedLectureNum  = Integer.parseInt(lectureNum);
-        List<DetailLectureInfoVO> lectureList = dao.LectureList(parsedCategory, parsedLectureNum );
+        List<DetailLectureInfoVO> lectureList;
+
+        if(parsedCategory != 0) lectureList = dao.LectureList(parsedCategory, parsedLectureNum );
+        else lectureList = dao.getAllLectureList();
+
         List<ImgVO> imgList = dao.getLectureImg(parsedLectureNum);
 
         Map<String, Object> result = new HashMap<>();
