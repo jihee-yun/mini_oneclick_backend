@@ -829,7 +829,7 @@ public class MemberDAO {
                     "    ON L.NUM_ = P.LECTURE_NUM\n" +
                     "    JOIN T_MEMBER M\n" +
                     "    ON P.MEMBER_NUM = M.NUM_\n" +
-                    "    WHERE IS_CANCEL = 'N' AND M.ID_ = " + "'" + id + "'";
+                    "    WHERE IS_CANCEL = 'N' AND M.ID_ = " + "'" + id + "'" + "ORDER BY P.CREATED DESC";
             rs = stmt.executeQuery(sql);
 
             while(rs.next()) {
@@ -863,7 +863,7 @@ public class MemberDAO {
         return list;
     }
 
-    // 결제 내역 조회
+    // 수강생 내역 조회
     public List<MyPaymentVO> myStudent(String name) {
         List<MyPaymentVO> list = new ArrayList<>();
         try {
@@ -874,7 +874,7 @@ public class MemberDAO {
                     " ON L.NUM_ = P.LECTURE_NUM\n" +
                     " JOIN T_MEMBER M\n" +
                     " ON P.MEMBER_NUM = M.NUM_\n" +
-                    " WHERE L.LECTURER = " + "'" + name + "'";
+                    " WHERE L.LECTURER = " + "'" + name + "'" + "ORDER BY P.CREATED DESC";
             rs = stmt.executeQuery(sql);
 
             while(rs.next()) {
