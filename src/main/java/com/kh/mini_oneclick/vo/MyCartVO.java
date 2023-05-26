@@ -3,6 +3,7 @@ package com.kh.mini_oneclick.vo;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 @Getter
@@ -13,8 +14,8 @@ public class MyCartVO {
     private int lecNum;
     private String lecName;
     private String thum;
-    private int price;
+    private BigDecimal price;
     private int quantity;
     private Date startDate; // 일단 수강일자.......
-    private int totalPrice; // 총금액
+    private BigDecimal totalPrice; // 총금액
 }

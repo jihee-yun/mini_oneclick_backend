@@ -3,6 +3,7 @@ package com.kh.mini_oneclick.dao;
 import com.kh.mini_oneclick.common.Common;
 import com.kh.mini_oneclick.vo.*;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -922,10 +923,10 @@ public class MemberDAO {
                 int num2 = rs.getInt("LNUM");
                 String lectureName = rs.getString("NAME_");
                 String thumnail = rs.getString("THUM");
-                int price = rs.getInt("PRICE_");
+                BigDecimal price = rs.getBigDecimal("PRICE_");
                 int quantity = rs.getInt("QUANTITY");
                 Date startDate = rs.getDate("START_DATE");
-                int totalPrice = price * quantity;
+                BigDecimal totalPrice = price.multiply(BigDecimal.valueOf(quantity));
 
                 MyCartVO vo = new MyCartVO();
                 vo.setLecNum(num2);
