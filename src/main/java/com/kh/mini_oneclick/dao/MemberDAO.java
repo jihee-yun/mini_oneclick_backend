@@ -323,7 +323,7 @@ public class MemberDAO {
                     "    JOIN T_SUBS T\n" +
                     "    ON T.NUM_ = S.SUBSCRIPTION_NUM\n" +
                     "    JOIN T_PAYSUB P\n" +
-                    "    ON T.PAYMENT_NUM = P.NUM_\n" +
+                    "    ON T.PAYMSUB_NUM = P.NUM_\n" +
                     "    WHERE ID_ = " + "'" + id + "'";
             rs = stmt.executeQuery(sql);
 
