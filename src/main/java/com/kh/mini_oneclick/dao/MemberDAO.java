@@ -317,26 +317,29 @@ public class MemberDAO {
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT SUBSCRIPTION_NUM, START_DATE, END_DATE, ID_, IS_SUB, TYPE_\n" +
+            String sql = "SELECT SUBSCRIPTION_NUM, START_DATE, END_DATE, ID_, IS_SUB, TYPE_, P.NUM_ AS PNUM\n" +
                     "    FROM T_MEMBER M JOIN T_MY_SUBS S\n" +
                     "    ON M.NUM_ = S.MEMBER_NUM\n" +
                     "    JOIN T_SUBS T\n" +
                     "    ON T.NUM_ = S.SUBSCRIPTION_NUM\n" +
+                    "    JOIN T_PAYSUB P\n" +
+                    "    ON T.PAYMENT_NUM = P.NUM_\n" +
                     "    WHERE ID_ = " + "'" + id + "'";
             rs = stmt.executeQuery(sql);
 
             while(rs.next()) {
+                int num = rs.getInt("PNUM");
                 String isSub = rs.getString("IS_SUB");
                 String type = rs.getString("TYPE_");
                 Date startDate = rs.getDate("START_DATE");
                 Date endDate = rs.getDate("END_DATE");
-
 
                 MemberVO vo = new MemberVO();
                 vo.setIsSub(isSub);
                 vo.setSubsType(type);
                 vo.setMySubStartDate(startDate);
                 vo.setMySubEndDate(endDate);
+                vo.setPaySubNum(num);
                 list.add(vo);
             }
             Common.close(rs);

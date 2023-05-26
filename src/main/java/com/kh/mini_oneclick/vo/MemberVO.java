@@ -20,7 +20,8 @@ public class MemberVO {
     private Date mySubStartDate; // 내 구독권
     private Date mySubEndDate; // 내 구독권
     private String subsType; // 내 구독권
-    private String isSub;
+    private String isSub; // 내 구독권
+    private int paySubNum;
 
 
 }
