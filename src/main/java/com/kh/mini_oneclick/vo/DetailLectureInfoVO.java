@@ -8,7 +8,7 @@ import java.sql.Date;
 @Getter
 @Setter
 public class DetailLectureInfoVO {
-    private int lectureNum;
+    private int num;
     private int category_Num;
     private int likeCount;
     private String name;
@@ -21,4 +21,5 @@ public class DetailLectureInfoVO {
     private String addr;
     private String lecturer;
     private String lecturer_desc;
+    private String lecturer_photo;
 }

@@ -39,9 +39,10 @@ public class DetailLectureInfoDAO {
                 String Addr = rs.getString("ADDR");
                 String Lecturer = rs.getString("LECTURER");
                 String Lecturer_desc = rs.getString("LECTURER_DESC");
+                String Lecture_photo = rs.getString("LECTURER_PHOTO");
 
                 DetailLectureInfoVO vo = new DetailLectureInfoVO();
-                vo.setLectureNum(LectureNum);
+                vo.setNum(LectureNum);
                 vo.setCategory_Num(CategoryNum);
                 vo.setLikeCount(LikeCount);
                 vo.setName(Name);
@@ -54,6 +55,7 @@ public class DetailLectureInfoDAO {
                 vo.setAddr(Addr);
                 vo.setLecturer(Lecturer);
                 vo.setLecturer_desc(Lecturer_desc);
+                vo.setLecturer_photo(Lecture_photo);
                 list.add(vo);
             }
             Common.close(rs);
