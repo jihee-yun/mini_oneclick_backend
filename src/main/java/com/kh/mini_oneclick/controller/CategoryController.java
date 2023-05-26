@@ -23,7 +23,10 @@ public class CategoryController {
     @GetMapping("/category/details")
     public ResponseEntity<List<CategoryVo>> categoryDetails(@RequestParam int categoryNum) {
         System.out.println("categoryNum: " + categoryNum);
-        List<CategoryVo> list = categoryDAO.getLecturesByCategory(categoryNum);
+        List<CategoryVo> list;
+        if(categoryNum == 0) list = categoryDAO.getAllCategories();
+        else list = categoryDAO.getLecturesByCategory(categoryNum);
+
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 }
