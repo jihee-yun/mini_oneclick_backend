@@ -21,7 +21,7 @@ public class CategoryDAO {
             conn = Common.getConnection();
             stmt = conn.createStatement();
 
-            String sql = "SELECT L.NUM_ AS LECTURE_NUM, L.NAME_, L.END_DATE, L.LIKECOUNT, L.THUM, L.INTRO, L.PRICE_, L.LECTURER, C.NAME_ AS CATEGORY_NAME "
+            String sql = "SELECT L.NUM_ AS LECTURE_NUM, L.NAME_, L.END_DATE, L.LIKECOUNT, L.THUM, L.INTRO, L.PRICE_, L.LECTURER, C.NAME_ AS CATEGORY_NAME, C.NUM_ AS CATEGORY_NUM "
                     + "FROM T_LECTURE L "
                     + "JOIN T_CATEGORY C ON L.CATEGORY_NUM = C.NUM_ "
                     + "WHERE L.END_DATE <> CURRENT_TIMESTAMP";
@@ -29,6 +29,7 @@ public class CategoryDAO {
             rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
+                int num = rs.getInt("CATEGORY_NUM");
                 int lectureNum = rs.getInt("LECTURE_NUM");
                 String name = rs.getString("NAME_");
                 int likeCount = rs.getInt("LIKECOUNT");
@@ -40,6 +41,7 @@ public class CategoryDAO {
                 Date endDate = rs.getDate("END_DATE");
 
                 CategoryVo vo = new CategoryVo();
+                vo.setNum(num);
                 vo.setLectureNum(lectureNum);
                 vo.setName(name);
                 vo.setLikeCount(likeCount);
@@ -69,7 +71,7 @@ public class CategoryDAO {
             conn = Common.getConnection();
             stmt = conn.createStatement();
 
-            String sql = "SELECT L.NUM_ AS LECTURE_NUM, L.NAME_, L.END_DATE, L.LIKECOUNT, L.THUM, L.INTRO, L.PRICE_, L.LECTURER, C.NAME_ AS CATEGORY_NAME "
+            String sql = "SELECT L.NUM_ AS LECTURE_NUM, L.NAME_, L.END_DATE, L.LIKECOUNT, L.THUM, L.INTRO, L.PRICE_, L.LECTURER, C.NAME_ AS CATEGORY_NAME, C.NUM_ AS CATEGORY_NUM  "
                     + "FROM T_LECTURE L "
                     + "JOIN T_CATEGORY C ON L.CATEGORY_NUM = C.NUM_ "
                     + "WHERE L.CATEGORY_NUM = '" + categoryNum + "' "
@@ -78,6 +80,7 @@ public class CategoryDAO {
             rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
+                int num = rs.getInt("CATEGORY_NUM");
                 int lectureNum = rs.getInt("LECTURE_NUM");
                 String name = rs.getString("NAME_");
                 int likeCount = rs.getInt("LIKECOUNT");
@@ -89,6 +92,7 @@ public class CategoryDAO {
                 Date endDate = rs.getDate("END_DATE");
 
                 CategoryVo vo = new CategoryVo();
+                vo.setNum(num);
                 vo.setLectureNum(lectureNum);
                 vo.setName(name);
                 vo.setLikeCount(likeCount);

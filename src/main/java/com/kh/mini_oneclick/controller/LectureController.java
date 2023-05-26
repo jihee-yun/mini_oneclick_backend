@@ -26,7 +26,7 @@ public class LectureController {
         List<DetailLectureInfoVO> lectureList;
 
         if(parsedCategory != 0) lectureList = dao.LectureList(parsedCategory, parsedLectureNum );
-        else lectureList = dao.getAllLectureList();
+        else lectureList = dao.getAllLectureList(parsedCategory, parsedLectureNum);
 
         List<ImgVO> imgList = dao.getLectureImg(parsedLectureNum);
 

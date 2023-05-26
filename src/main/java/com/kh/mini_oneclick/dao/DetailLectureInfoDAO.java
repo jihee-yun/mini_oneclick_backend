@@ -14,18 +14,18 @@ public class DetailLectureInfoDAO {
     private ResultSet rs = null;
     private PreparedStatement pStmt = null;
 
-    public List<DetailLectureInfoVO> getAllLectureList() {
+    public List<DetailLectureInfoVO> getAllLectureList(int Cnum, int lectureNum) {
         List<DetailLectureInfoVO> list = new ArrayList<>();
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
             String sql = "SELECT * FROM T_LECTURE " +
                     "INNER JOIN T_CATEGORY C ON L.CATEGORY_NUM = C.NUM_ " +
-                    "WHERE C.NUM_ = " + "'" + category + "' AND " + "L.NUM_ =" + "'" + lectureNum + "'" +
+                    "WHERE C.NUM_ = " + "'" + Cnum + "' AND " + "L.NUM_ =" + "'" + lectureNum + "'" +
                     "AND L.END_DATE >= SYSDATE";
             rs = stmt.executeQuery(sql);
             while(rs.next()) {
-                int LectureNum = rs.getInt("NUM_");
+                int LectureNum = rs.getInt("L.NUM_");
                 int CategoryNum = rs.getInt("CATEGORY_NUM");
                 int LikeCount = rs.getInt("LIKECOUNT");
                 String Name = rs.getString("NAME_");
