@@ -779,6 +779,25 @@ public class MemberDAO {
         else return false;
     }
 
+    // 후기 수정(이미지 삭제만)
+    public boolean deleteReview(String num) {
+        int result = 0;
+        String sql = "DELETE T_REVIEW WHERE NUM_ = ?";
+
+        try {
+            conn = Common.getConnection();
+            pStmt = conn.prepareStatement(sql);
+            pStmt.setString(1, num);
+            result = pStmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pStmt);
+        Common.close(conn);
+        if(result == 1) return true;
+        else return false;
+    }
+
     // 강의 썸네일 이미지 업데이트
     public boolean updateImg(String url) {
         int result = 0;

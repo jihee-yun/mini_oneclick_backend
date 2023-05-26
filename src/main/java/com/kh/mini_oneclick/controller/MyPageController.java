@@ -225,6 +225,15 @@ public class MyPageController {
         boolean isTrue = dao.updateReviewContent(getNum, getContent);
         return new ResponseEntity<>(isTrue, HttpStatus.OK);
     }
+    // 후기 삭제
+    @PostMapping("/delReview")
+    public ResponseEntity<Boolean> deleteReview(@RequestBody Map<String, String> write) {
+        String getNum = write.get("num");
+        MemberDAO dao = new MemberDAO();
+        boolean isTrue = dao.deleteReview(getNum);
+        return new ResponseEntity<>(isTrue, HttpStatus.OK);
+    }
+
     // 이미지 업데이트(강의 썸네일)
     @PostMapping("/updateImg")
     public ResponseEntity<Boolean> updateImg(@RequestBody Map<String, String> update) {
