@@ -59,7 +59,7 @@ public class PaymentController {
     // 장바구니 결제
     @PostMapping("/payCart")
     public ResponseEntity<Boolean> paymentCartClass(@RequestBody Map<String, String> payCartData) {
-
+        System.out.println(payCartData.toString());
             int lectureNum = Integer.parseInt(payCartData.get("lectureNum"));
             int memberNum = Integer.parseInt(payCartData.get("memberNum"));
             BigDecimal amount = new BigDecimal(payCartData.get("amount"));
