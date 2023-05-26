@@ -20,6 +20,7 @@ public class MyPaymentVO {
     private Date cancleDate;
     private String isCancle;
 
+    private Date startDate;
     private String student; // 수강생 조회 시 필요한 수강생 이름(쿼리문 조인)
     private String tel; // 수강생 조회 시 필요한 수강생 전화번호(쿼리문 조인)
 

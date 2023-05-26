@@ -804,7 +804,7 @@ public class MemberDAO {
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT P.NUM_ AS PNUM, L.NUM_, P.MEMBER_NUM, L.NAME_, L.THUM, L.PRICE_, L.ADDR, P.CREATED, P.AMOUNT, P.CANCEL_DATE, P.IS_CANCEL\n" +
+            String sql = "SELECT P.NUM_ AS PNUM, L.NUM_, P.MEMBER_NUM, L.NAME_, L.START_DATE, L.THUM, L.PRICE_, L.ADDR, P.CREATED, P.AMOUNT, P.CANCEL_DATE, P.IS_CANCEL\n" +
                     "    FROM T_LECTURE L JOIN T_PAYMENT P\n" +
                     "    ON L.NUM_ = P.LECTURE_NUM\n" +
                     "    JOIN T_MEMBER M\n" +
@@ -819,6 +819,7 @@ public class MemberDAO {
                 int price = rs.getInt("PRICE_");
                 int amount = rs.getInt("AMOUNT");
                 Date created = rs.getDate("CREATED");
+                Date startDate = rs.getDate("START_DATE");
                 String isCancle = rs.getString("IS_CANCEL");
 
                 MyPaymentVO vo = new MyPaymentVO();
@@ -828,6 +829,7 @@ public class MemberDAO {
                 vo.setPrice(price);
                 vo.setAmount(amount);
                 vo.setCreated(created);
+                vo.setStartDate(startDate);
                 vo.setIsCancle(isCancle);
                 list.add(vo);
             }
