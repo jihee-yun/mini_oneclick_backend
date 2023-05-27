@@ -513,7 +513,7 @@ public class MemberDAO {
                     "    ON L.NUM_ = R.LECTURE_NUM\n" +
                     "    JOIN T_MY_LECTURE C\n" +
                     "    ON M.NUM_ = C.MEMBER_NUM AND L.NUM_ = C.LECTURE_NUM" +
-                    "    WHERE ID_ = " + "'" + id + "'";
+                    "    WHERE ID_ = " + "'" + id + "'" + "ORDER BY NUM_ DESC";
 
             rs = stmt.executeQuery(sql);
 
@@ -692,13 +692,19 @@ public class MemberDAO {
             pStmt1.setString(3, content);
             pStmt1.setString(4, url);
             int writeReviewResult = pStmt1.executeUpdate();
+            System.out.println("결과" + writeReviewResult);
 
-            String updateWrittenSql = "UPDATE T_MY_LECTURE SET WRITTEN = 'Y' WHERE LECTURE_NUM = ?";
+            String updateWrittenSql = "UPDATE T_MY_LECTURE SET WRITTEN = 'Y' WHERE LECTURE_NUM = ? AND MEMBER_NUM = ? ";
             pStmt2 = conn.prepareStatement(updateWrittenSql);
             pStmt2.setString(1, lecNum);
+            pStmt2.setString(2, memNum);
             int updateWrittenResult = pStmt2.executeUpdate();
+            System.out.println("결과" + updateWrittenResult);
 
-            if (writeReviewResult == 1 && updateWrittenResult == 1) {
+
+            if (writeReviewResult == 1 && updateWrittenResult >= 1) {
+                System.out.println(writeReviewResult);
+                System.out.println(updateWrittenResult);
                 conn.commit(); // 커밋
                 isSuccess = true;
             } else {
@@ -721,6 +727,7 @@ public class MemberDAO {
 
         return isSuccess;
     }
+
     // 후기 수정(전체)
     public boolean updateReview(String num, String content, String url) {
         int result = 0;
