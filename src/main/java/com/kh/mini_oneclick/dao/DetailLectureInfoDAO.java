@@ -14,14 +14,14 @@ public class DetailLectureInfoDAO {
     private ResultSet rs = null;
     private PreparedStatement pStmt = null;
 
-    public List<DetailLectureInfoVO> getAllLectureList(int Cnum, int lectureNum) {
+    public List<DetailLectureInfoVO> getAllLectureList(int lectureNum) {
         List<DetailLectureInfoVO> list = new ArrayList<>();
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT * FROM T_LECTURE " +
+            String sql = "SELECT * FROM T_LECTURE L " +
                     "INNER JOIN T_CATEGORY C ON L.CATEGORY_NUM = C.NUM_ " +
-                    "WHERE C.NUM_ = " + "'" + Cnum + "' AND " + "L.NUM_ =" + "'" + lectureNum + "'" +
+                    "WHERE L.NUM_ =" + "'" + lectureNum + "'" +
                     "AND L.END_DATE >= SYSDATE";
             rs = stmt.executeQuery(sql);
             while(rs.next()) {
@@ -57,25 +57,24 @@ public class DetailLectureInfoDAO {
                 vo.setLecturer_photo(Lecture_photo);
                 list.add(vo);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             Common.close(rs);
             Common.close(stmt);
             Common.close(conn);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return list;
     }
 
-    public List<DetailLectureInfoVO> LectureList(int category, int lectureNum) {
+    public List<DetailLectureInfoVO> selectLectureList(int lectureNum) {
         List<DetailLectureInfoVO> list = new ArrayList<>();
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            System.out.println("LectureDAO 실행 : " + category + "," + lectureNum);
             String sql = "SELECT * FROM T_LECTURE L " +
                     "INNER JOIN T_CATEGORY C ON L.CATEGORY_NUM = C.NUM_ " +
-                    "WHERE C.NUM_ = " + "'" + category + "' AND " + "L.NUM_ =" + "'" + lectureNum + "'" +
-                    "AND L.END_DATE >= SYSDATE";
+                    "WHERE L.NUM_ =" + "'" + lectureNum + "'";
             rs = stmt.executeQuery(sql);
             while(rs.next()) {
                 int LectureNum = rs.getInt("NUM_");
@@ -110,11 +109,12 @@ public class DetailLectureInfoDAO {
                 vo.setLecturer_photo(Lecture_photo);
                 list.add(vo);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             Common.close(rs);
             Common.close(stmt);
             Common.close(conn);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return list;
     }
@@ -136,11 +136,12 @@ public class DetailLectureInfoDAO {
                 vo.setMainImg4(rs.getString("MAINIMG4"));
                 list.add(vo);
             }
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
             Common.close(rs);
             Common.close(stmt);
             Common.close(conn);
-        } catch(Exception e) {
-            e.printStackTrace();
         }
         return list;
     }
@@ -157,10 +158,11 @@ public class DetailLectureInfoDAO {
             else isReg = false;
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            Common.close(rs);
+            Common.close(stmt);
+            Common.close(conn);
         }
-        Common.close(rs);
-        Common.close(stmt);
-        Common.close(conn);
         return isReg; // 위시리스트에 있으면 true, 없으면 false 반환
     }
 
@@ -176,9 +178,10 @@ public class DetailLectureInfoDAO {
             System.out.println("찜하기 추가 결과 확인" + result);
         } catch(Exception e) {
             e.printStackTrace();
+        } finally {
+            Common.close(pStmt);
+            Common.close(conn);
         }
-        Common.close(pStmt);
-        Common.close(conn);
 
         if(result == 1) return true;
         else return false;
@@ -196,9 +199,10 @@ public class DetailLectureInfoDAO {
             System.out.println("찜하기 삭제 결과 확인" + result);
         } catch(Exception e) {
             e.printStackTrace();
+        } finally {
+            Common.close(pStmt);
+            Common.close(conn);
         }
-        Common.close(pStmt);
-        Common.close(conn);
 
         if(result == 1) return false;
         else return true;
@@ -216,10 +220,11 @@ public class DetailLectureInfoDAO {
             else isReg = true;
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            Common.close(rs);
+            Common.close(stmt);
+            Common.close(conn);
         }
-        Common.close(rs);
-        Common.close(stmt);
-        Common.close(conn);
         return isReg; // 위시리스트에 있으면 false, 없으면 true 반환
     }
 
@@ -236,9 +241,10 @@ public class DetailLectureInfoDAO {
             System.out.println("카트에 담기 결과 확인" + result);
         } catch(Exception e) {
             e.printStackTrace();
+        } finally {
+            Common.close(pStmt);
+            Common.close(conn);
         }
-        Common.close(pStmt);
-        Common.close(conn);
 
         if(result == 1) return true;
         else return false;

@@ -18,16 +18,13 @@ import java.util.Map;
 public class LectureController {
     // 강의 정보 출력
     @GetMapping("/class")
-    public ResponseEntity<Map<String, Object>> lectureList(@RequestParam String category, @RequestParam String lectureNum) {
-        System.out.println("LectureList 메소드 실행 !\n category : " + category + ", lectureNum : " + lectureNum);
+    public ResponseEntity<Map<String, Object>> lectureList(@RequestParam String lectureNum) {
+        System.out.println("LectureList 메소드 실행 !\n lectureNum : " + lectureNum);
         DetailLectureInfoDAO dao = new DetailLectureInfoDAO();
-        int parsedCategory  = Integer.parseInt(category);
         int parsedLectureNum  = Integer.parseInt(lectureNum);
-        List<DetailLectureInfoVO> lectureList;
-
-        if(parsedCategory != 0) lectureList = dao.LectureList(parsedCategory, parsedLectureNum );
-        else lectureList = dao.getAllLectureList(parsedCategory, parsedLectureNum);
-
+        // 강의 테이블에 있는 정보 가져오기
+        List<DetailLectureInfoVO> lectureList = dao.selectLectureList(parsedLectureNum);
+        // 강의 이미지 들고 옴
         List<ImgVO> imgList = dao.getLectureImg(parsedLectureNum);
 
         Map<String, Object> result = new HashMap<>();
